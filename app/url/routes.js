@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const url = require('./url');
-const visit = require('./visit');
+const visit = require('../visit/visit');
 
 
 router.get('/:hash', async (req, res, next) => {
