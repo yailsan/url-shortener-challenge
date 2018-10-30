@@ -112,6 +112,15 @@ async function removeUrl (hash, removeToken) {
 }
 
 /**
+ * registerVisit
+ * @param { string } id
+ * @return { object } 
+ */
+async function registerVisit(id) {
+  return await UrlModel.findOneAndUpdate({ _id: id }, { $inc: { visits: 1 } }, { new: true });
+}
+
+/**
  * Validate URI
  * @param {any} url
  * @returns {boolean}
@@ -126,5 +135,6 @@ module.exports = {
   generateHash,
   generateRemoveToken,
   removeUrl,
+  registerVisit,
   isValid
 }

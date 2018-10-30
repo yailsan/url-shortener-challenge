@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const url = require('./url');
+const visit = require('./visit');
 
 
 router.get('/:hash', async (req, res, next) => {
@@ -13,7 +14,10 @@ router.get('/:hash', async (req, res, next) => {
     return next(urlNotFound);
   }
 
-  // TODO: Register visit
+  // Register visit
+  try {
+    await visit.registerVisit(source._id, req.get('User-Agent'));
+  } catch (e) {}
 
 
   // Behave based on the requested format using the 'Accept' header.
@@ -48,7 +52,9 @@ router.post('/', async (req, res, next) => {
     let shortUrl = await url.shorten(req.body.url);
     res.json(shortUrl);
   } catch (e) {
-    // TODO: Personalized Error Messages
+    if (e.message === 'Invalid URL') {
+      e.message = 'It seems to be an error with the supplied url, please check it and submit again.';
+    }
     next(e);
   }
 });
