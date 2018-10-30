@@ -2,7 +2,7 @@ const uuidv4 = require('uuid/v4');
 const { domain } = require('../../environment');
 const SERVER = `${domain.protocol}://${domain.host}`;
 
-const UrlModel = require('./schema');
+const UrlModel = require('./urlSchema');
 const parseUrl = require('url').parse;
 const validUrl = require('valid-url');
 

@@ -6,9 +6,12 @@ router.get('/:hash', async (req, res, next) => {
 
   const source = await url.getUrl(req.params.hash);
 
-  // TODO: Respond accordingly when the hash wasn't found (404 maybe?)
-
-  // TODO: Hide fields that shouldn't be public
+  // If the hash wasn't found return a 404
+  if (source === null) {
+    const urlNotFound = new Error('Could not found a url associated with that hash');
+    urlNotFound.status = 404;
+    return next(urlNotFound);
+  }
 
   // TODO: Register visit
 
@@ -33,7 +36,13 @@ router.get('/:hash', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
 
-  // TODO: Validate 'req.body.url' presence
+  // if no url return error message
+  const bodyURL = req.body.url;
+  if (!bodyURL || bodyURL === '') {
+    const noUrl = new Error('No URL was given');
+    noUrl.status = 400;
+    next(noUrl);
+  }
 
   try {
     let shortUrl = await url.shorten(req.body.url);

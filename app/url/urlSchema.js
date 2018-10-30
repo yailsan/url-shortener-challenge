@@ -1,7 +1,7 @@
 const mongo = require('../../server/mongodb');
 const mongoose = require('mongoose');
 
-module.exports = mongo.model('Url', new mongoose.Schema({
+const URLSchema = new mongoose.Schema({
   url: {
     type: String,
     required: true
@@ -39,4 +39,18 @@ module.exports = mongo.model('Url', new mongoose.Schema({
     required: true,
     default: true
   }
-}));
+});
+
+// hide fields from public
+URLSchema.set('toJSON', {
+  transform: function (doc, ret) {
+    return {
+      _id: ret._id,
+      url: ret.url,
+      hash: ret.hash,
+      removeToken: ret.removeToken
+    };
+  }
+})
+
+module.exports = mongo.model('Url', URLSchema);
