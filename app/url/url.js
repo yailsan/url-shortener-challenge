@@ -102,6 +102,16 @@ async function shorten(url) {
 }
 
 /**
+ * removeUrl
+ * @param {string} hash
+ * @param {string} removeToken
+ * @return {object} 
+ */
+async function removeUrl (hash, removeToken) {
+  return await UrlModel.deleteOne({ hash, removeToken });
+}
+
+/**
  * Validate URI
  * @param {any} url
  * @returns {boolean}
@@ -115,5 +125,6 @@ module.exports = {
   getUrl,
   generateHash,
   generateRemoveToken,
+  removeUrl,
   isValid
 }
