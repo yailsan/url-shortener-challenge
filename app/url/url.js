@@ -11,13 +11,13 @@ const validUrl = require('valid-url');
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
 
 /**
- * Lookup for existant, active shortened URLs by hash.
+ * Lookup for existant, active shortened URLs by hash or url.
  * 'null' will be returned when no matches were found.
- * @param {string} hash
+ * @param {string} searchString
  * @returns {object}
  */
-async function getUrl(hash) {
-  let source = await UrlModel.findOne({ active: true, hash });
+async function getUrl(searchString) {
+  let source = await UrlModel.findOne({ active: true, $or: [{ hash: searchString }, {url: searchString }] });
   return source;
 }
 
@@ -58,6 +58,13 @@ async function shorten(url) {
 
   if (!isValid(url)) {
     throw new Error('Invalid URL');
+  }
+
+  // Check if url already exists in db
+  // if exists return record 
+  const foundUrl = await getUrl(url);
+  if (foundUrl !== null) {
+    return foundUrl;
   }
 
   // Get URL components for metrics sake
