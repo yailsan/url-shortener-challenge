@@ -6,6 +6,10 @@ const UrlModel = require('./schema');
 const parseUrl = require('url').parse;
 const validUrl = require('valid-url');
 
+
+/* Dictionary */
+const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+
 /**
  * Lookup for existant, active shortened URLs by hash.
  * 'null' will be returned when no matches were found.
@@ -18,15 +22,21 @@ async function getUrl(hash) {
 }
 
 /**
- * Generate an unique hash-ish- for an URL.
- * TODO: Deprecated the use of UUIDs.
- * TODO: Implement a shortening algorithm
+/**
+ * Generate an unique hash-ish- for an URL, based on an id.
  * @param {string} id
  * @returns {string} hash
  */
-function generateHash(url) {
-  // return uuidv5(url, uuidv5.URL);
-  return uuidv4();
+function generateHash(id) {
+  let num = parseInt(id, 16);
+  let hash = '';
+
+  while (num > 0) {
+    hash = `${alphabet[num % alphabet.length]}${hash}`;
+    num = Math.floor(num / alphabet.length);
+  }
+
+  return hash;
 }
 
 /**
@@ -42,10 +52,9 @@ function generateRemoveToken() {
  * Parse the URL destructuring into base components (Protocol, Host, Path).
  * An Error will be thrown if the URL is not valid or saving fails.
  * @param {string} url
- * @param {string} hash
  * @returns {object}
  */
-async function shorten(url, hash) {
+async function shorten(url) {
 
   if (!isValid(url)) {
     throw new Error('Invalid URL');
@@ -66,22 +75,23 @@ async function shorten(url, hash) {
     protocol,
     domain,
     path,
-    hash,
     isCustom: false,
     removeToken,
     active: true
   });
 
-  const saved = await shortUrl.save();
-  // TODO: Handle save errors
+  const newId = shortUrl._id.toString();
+  // Pass the las 3 bytes from newly generated ObjectId
+  const hash = generateHash(newId.slice(newId.length - 6));
+  shortUrl.hash = hash;
 
+  const saved = await shortUrl.save();
   return {
     url,
     shorten: `${SERVER}/${hash}`,
     hash,
     removeUrl: `${SERVER}/${hash}/remove/${removeToken}`
   };
-
 }
 
 /**

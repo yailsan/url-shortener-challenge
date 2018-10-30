@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./app/tests/**/*.test.js"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +12,7 @@
     "body-parser": "^1.18.2",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
+    "ip": "^1.1.5",
     "mongoose": "^4.12.3",
     "uuid": "^3.1.0",
     "valid-url": "^1.0.9"
@@ -26,7 +27,9 @@
     "node": ">7.6.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^4.9.0",
-    "eslint-plugin-node": "^5.2.0"
+    "eslint-plugin-node": "^5.2.0",
+    "mocha": "^5.2.0"
   }
 }
